@@ -1,3 +1,7 @@
+script "tcrs-equipment.ash"
+notify Jeparo;
+since r19208; // Whatever
+
 boolean [string] equipment_names()
 {
 	boolean [string] ret;
