@@ -648,12 +648,21 @@ void main(string arguments)
 	if (arguments.contains_text("help") || arguments == "")
 	{
 		print_html("<b>Usage: </b>");
-		print_html("tcrs-equipment modifier1,modifier2,modifier3, where modifier is one of");
+		print_html("tcrs-equipment modifier1,modifier2,modifier3");
+		print_html("or tcrs-equipment maximize modifier1,modifier2,modifier3");
+		print_html("where modifiers can be any of");
 		foreach key in default_functions
 		{
 			print(key);
 		}
 		return;
+	}
+
+	boolean maximize = false;
+	if (arguments.contains_text("maximize"))
+	{
+		arguments = arguments.replace_string("maximize", "");
+		maximize = true;
 	}
 
 	int[string] functions;
@@ -686,13 +695,40 @@ void main(string arguments)
 		string inv_section = inventory_section(heading, sections[i+1]);
 		boolean[string] itnames = equipment_names(inv_section);
 		int[string] filtered = filter(functions, itnames);
-		sort filtered by value;
+		sort filtered by -value;
 		if (count(filtered) > 0)
 		{
 			print_html("<b>"+heading+"</b>");
+			int shouldEquip = maximize ? 1 : 0;
+			if(heading == "Accessories" && maximize) { shouldEquip = 3; }
 			foreach name, mod in filtered
 			{
 				print(mod + " | " + name);
+				if (shouldEquip > 0)
+				{
+					item it = to_item(canonicalize_item(name));
+					if(it == $item[none]) {
+						print("Couldn't figure out how to equip a " + name + ", skipping...");
+						continue;
+					}
+					if(equipped_amount(it) > 0) {
+						continue;
+					}
+					slot sl = to_slot(it);
+					if (weapon_hands(it) == 2)
+					{
+						print("We don't handle two-handed weapons but you might want to equip a " + it +", sorry.", "red");
+						continue;
+					}
+					if (sl == $slot[acc1])
+					{
+						if (shouldEquip == 2) sl = $slot[acc2];
+						if (shouldEquip == 1) sl = $slot[acc3];
+					}
+					equip(sl, to_item(canonicalize_item(name)));
+					shouldEquip--;
+					print("equipped");
+				}
 			}
 		}
 	}
