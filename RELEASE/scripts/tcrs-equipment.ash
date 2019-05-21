@@ -430,10 +430,6 @@ string canonicalize_item(string itname)
 		" of wisdom",
 		" of the wise owl",
 		"wizardly ",
-		// moxie
-		"cool ",
-		"slick ",
-		"smooth ",
 		" of the cougar",
 		"stylish ",
 		// %mus
@@ -448,6 +444,10 @@ string canonicalize_item(string itname)
 		"groovy ",
 		"supercool ",
 		"smartaleck's ",
+		// moxie
+		"cool ",
+		"slick ",
+		"smooth ",
 		// cold dmg
 		"chilly ",
 		"nippy ",
@@ -528,6 +528,7 @@ string canonicalize_item(string itname)
 		"medical-grade ",
 		"crafty ",
 		"deadly ",
+		"sinister ",
 
 		// cosmetic
 		"blinking",
@@ -708,7 +709,7 @@ void main(string arguments)
 				{
 					item it = to_item(canonicalize_item(name));
 					if(it == $item[none]) {
-						print("Couldn't figure out how to equip a " + name + ", skipping...");
+						print("Couldn't figure out how to equip a " + name + " (unknown item: " + canonicalize_item(name) + "), skipping...");
 						continue;
 					}
 					if(equipped_amount(it) > 0) {
