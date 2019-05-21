@@ -727,7 +727,6 @@ void main(string arguments)
 					}
 					equip(sl, to_item(canonicalize_item(name)));
 					shouldEquip--;
-					print("equipped");
 				}
 			}
 		}
