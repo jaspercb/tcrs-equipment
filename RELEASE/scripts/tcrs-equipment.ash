@@ -2,11 +2,10 @@ script "tcrs-equipment.ash"
 notify Jeparo;
 since r19208; // Whatever
 
-boolean [string] equipment_names()
+boolean [string] equipment_names(string equipment_section)
 {
 	boolean [string] ret;
-	string inv = visit_url("inventory.php");
-	matcher item_matcher = create_matcher("class=\"ircm\">(.*?)</b>", inv);
+	matcher item_matcher = create_matcher("class=\"ircm\">(.*?)</b>", equipment_section);
 	while(item_matcher.find())
 	{
 		ret[item_matcher.group(1)] = true;
@@ -395,18 +394,40 @@ void main(string arg)
 		{
 			if (ret == -1)
 			{
-				abort("I don't know what you're asking for");
+				abort("I don't know what you're asking for, have you tried 'tcrs-equipment help'?");
 			}
 			function = maybe_function;
 			
 		}
 	}
 
-	boolean[string] itnames = equipment_names();
-	int[string] filtered = filter(function, itnames);
-	sort filtered by value;
-	foreach name, mod in filtered
+	string inv = visit_url("inventory.php?which=2");
+
+	string[] sections = { "Hats", "Back", "Shirts", "Weapons", "Off-Hand", "Pants", "Accessories", "Familiar"};
+	string inventory_section(string heading, string heading2)
 	{
-		print(mod + " | " + name);
+		matcher section_matcher = create_matcher("<a name="+heading+">.*?<a name="+heading2, inv);
+		// grab __ until we see a good ol' closing brace
+		while(section_matcher.find())
+		{
+			return section_matcher.group(0);
+		}
+		print("no match");
+		return "";
+	}
+	foreach i, heading in sections {
+		if (heading == "Familiar") continue;
+		string inv_section = inventory_section(heading, sections[i+1]);
+		boolean[string] itnames = equipment_names(inv_section);
+		int[string] filtered = filter(function, itnames);
+		sort filtered by value;
+		if (count(filtered) > 0)
+		{
+			print_html("<b>"+heading+"</b>");
+			foreach name, mod in filtered
+			{
+				print(mod + " | " + name);
+			}
+		}
 	}
 }
