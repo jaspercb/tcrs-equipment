@@ -201,10 +201,15 @@ int colddmg_from(string itname)
 	mods["of chilblains"] = 25;
 	mods["nippy"] = 10;
 	mods["chilly"] = 5;
+	return modifier_from(itname, mods);
+}
 
-	mods["Jack Frost's"] = 50;
-	mods["of the blizzard"] = 25;
-	mods["frosty"] = 10;
+int coldspelldmg_from(string itname)
+{
+	int[string] mods;
+	mods["of chilblains"] = 25;
+	mods["nippy"] = 10;
+	mods["chilly"] = 5;
 	return modifier_from(itname, mods);
 }
 
@@ -214,7 +219,12 @@ int hotdmg_from(string itname)
 	mods["scorching"] = 25;
 	mods["sizzling"] = 10;
 	mods["toasty"] = 5;
+	return modifier_from(itname, mods);
+}
 
+int hotspelldmg_from(string itname)
+{
+	int[string] mods;
 	mods["of incineration"] = 50;
 	mods["of the brazier"] = 25;
 	mods["flame-wreathed"] = 10;
@@ -227,9 +237,15 @@ int sleazedmg_from(string itname)
 	mods["Jeselnik's"] = 25;
 	mods["ribald"] = 10;
 	mods["scandalous"] = 5;
+	return modifier_from(itname, mods);
+}
 
+int sleazespelldmg_from(string itname)
+{
+	int[string] mods;
 	mods["of mayonnaise"] = 50;
 	mods["lard-coated"] = 25;
+	mods["greasy"] = 10;
 	return modifier_from(itname, mods);
 }
 
@@ -239,7 +255,12 @@ int spookydmg_from(string itname)
 	mods["horrifying"] = 25;
 	mods["gravedigger's"] = 10;
 	mods["frightening"] = 5;
+	return modifier_from(itname, mods);
+}
 
+int spookyspelldmg_from(string itname)
+{
+	int[string] mods;
 	mods["of doom"] = 50;
 	mods["of horror"] = 25;
 	mods["of terror"] = 10;
@@ -252,7 +273,12 @@ int stenchdmg_from(string itname)
 	mods["of the sewer"] = 25;
 	mods["foul-smelling"] = 10;
 	mods["nasty"] = 5;
+	return modifier_from(itname, mods);
+}
 
+int stenchspelldmg_from(string itname)
+{
+	int[string] mods;
 	mods["of the overflowing toilet"] = 50;
 	mods["stanky"] = 25;
 	mods["smelly"] = 10;
@@ -310,6 +336,40 @@ int stenchres_from(string itname)
 
 	return modifier_from(itname, mods);
 }
+
+// COLUMN OTHER
+
+int hp_from(string itname)
+{
+	int[string] mods;
+	mods["veiny"] = 10;
+	mods["hale"] = 20;
+	mods["hardy"] = 50;
+	mods["of the bloodbag"] = 100;
+
+	// % HP - subtly wrong but that is OK
+	mods["wholesome"] = 0.1 * my_buffedstat($stat[muscle]);
+	mods["healthy"] = 0.2 * my_buffedstat($stat[muscle]);
+
+	return modifier_from(itname, mods);
+}
+
+int mp_from(string itname)
+{
+	int[string] mods;
+	mods["crafty"] = 10;
+	mods["clever"] = 20;
+	mods["hardy"] = 50;
+	mods["MacGyver's"] = 100;
+
+	// % MP - subtly wrong but that is OK
+	mods["vibrating"] = 0.1 * my_buffedstat($stat[mysticality]);
+	mods["energetic"] = 0.2 * my_buffedstat($stat[mysticality]);
+	mods["Oprah's"] = 0.5 * my_buffedstat($stat[mysticality]);
+
+	return modifier_from(itname, mods);
+}
+
 
 int all_from(string itname)
 {
@@ -638,12 +698,21 @@ void main(string arguments)
 	default_functions["sleaze dmg"] = true;
 	default_functions["spooky dmg"] = true;
 	default_functions["stench dmg"] = true;
+	// more
+	default_functions["cold spell dmg"] = true;
+	default_functions["hot spell dmg"] = true;
+	default_functions["sleaze spell dmg"] = true;
+	default_functions["spooky spell dmg"] = true;
+	default_functions["stench spell dmg"] = true;
 	// column 6
 	default_functions["cold res"] = true;
 	default_functions["hot res"] = true;
 	default_functions["sleaze res"] = true;
 	default_functions["spooky res"] = true;
 	default_functions["stench res"] = true;
+	// other
+	default_functions["hp"] = true;
+	default_functions["mp"] = true;
 	default_functions["all"] = true;
 
 	if (arguments.contains_text("help") || arguments == "")
